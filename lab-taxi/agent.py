@@ -1,20 +1,21 @@
 import numpy as np
 from collections import defaultdict
-import json
+# import json
 import pickle
 
 # Best average reward 9.525
 
+
 class Agent:
 
-    def __init__(self, nA=6):
+    def __init__(self, na=6):
         """ Initialize agent.
 
         Params
         ======
         - nA: number of actions available to the agent
         """
-        self.nA = nA
+        self.nA = na
         self.Q = defaultdict(lambda: np.zeros(self.nA))
         self.gamma = 0.9
         self.alpha = 0.1
@@ -57,17 +58,17 @@ class Agent:
         - done: whether the episode is complete (True or False)
         """
         self.i_episode += 1
-#         self.epsilon = max(self.epsilon_decay * self.epsilon, self.mini_epsilon)
+        # self.epsilon = max(self.epsilon_decay * self.epsilon, self.mini_epsilon)
         self.epsilon = max(1 / (self.i_episode ** 0.55), self.mini_epsilon)
         # update = get current and alternative estimates
         if not done:
-#             alternative_estimate = self.sarsa(reward, next_state)
-#             alternative_estimate = self.expected_sarsa(reward, next_state)
+            # alternative_estimate = self.sarsa(reward, next_state)
+            # alternative_estimate = self.expected_sarsa(reward, next_state)
             alternative_estimate = self.sarsa_max(reward, next_state)
                     
-#             state = next_state     # S <- S'
-#             action = next_action   # A <- A'
-        if done:
+            # state = next_state     # S <- S'
+            # action = next_action   # A <- A'
+        else:
             alternative_estimate = reward
         
         current_estimate = self.Q[state][action]
@@ -77,7 +78,7 @@ class Agent:
 
     def sarsa(self, reward, next_state):
         # SARSA
-        # Chooose an action At+1 following the same e-greedy policy based on current Q
+        # Choose an action At+1 following the same e-greedy policy based on current Q
         next_action = self.select_action(next_state)
         # get current and alternative estimates
         alternative_estimate = reward + self.gamma * self.Q[next_state][next_action]
@@ -95,16 +96,15 @@ class Agent:
         alternative_estimate = reward + self.gamma * next_q
         return alternative_estimate
             
-
     def plot_value_function(self):
         # plot the estimated optimal state-value function
-        V_sarsa = ([np.max(self.Q[key]) if key in self.Q else 0 for key in np.arange(500)])
-        print(V_sarsa)
+        v_sarsa = ([np.max(self.Q[key]) if key in self.Q else 0 for key in np.arange(500)])
+        print(v_sarsa)
         
     def open_model(self):
-#         with open('weigths.json') as data_file:
-#             self.weights = json.load(data_file)
-        file_name2 = 'weigths.pkl'
+        # with open('weights.json') as data_file:
+        #     self.weights = json.load(data_file)
+        file_name2 = 'weights.pkl'
         pkl_file = open(file_name2)
         my_dict = pickle.load(pkl_file)
         for (key, value) in my_dict:
@@ -113,10 +113,10 @@ class Agent:
         
     def save_model(self):
         # save references
-        file_name = 'weigths.json'
-        file_name2 = 'weigths.pkl'
+        # file_name = 'weights.json'
+        file_name2 = 'weights.pkl'
         output = open(file_name2, "wb")
         pickle.dump(dict(self.Q), output)
         output.close()
-#         with open(file_name, 'w') as outfile:
-#             json.dump(dict(self.Q), outfile)
+        # with open(file_name, 'w') as outfile:
+        #     json.dump(dict(self.Q), outfile)
