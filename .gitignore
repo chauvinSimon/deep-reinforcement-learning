@@ -106,3 +106,10 @@ ENV/
 # perso stuff
 log.py
 Videos/
+
+# exe
+p1_navigation/bug
+p1_navigation/Banana_Windows_x86_64
+Banana_Windows_x86_64.zip
+*.whl
+cnn_pytorch/
