@@ -1,6 +1,8 @@
 # Submission - Project 1: Navigation
 
-[![GIF of my trained agent, trained in 431 episodes](https://github.com/chauvinSimon/deep-reinforcement-learning/tree/master/p1_navigation/report_submission/demo_banana.gif)](https://github.com/chauvinSimon/deep-reinforcement-learning/tree/master/p1_navigation/report_submission/demo_banana.gif)
+>-- :banana: :bowtie: :banana:  -- Spoiler: problem solved in 431 Episodes --  :banana: :bowtie: :banana: 
+
+![GIF of my trained agent, trained in 431 episodes](report_submission/demo_banana.gif "GIF of my trained agent, trained in 431 episodes")
 
 ### Instructions
 Details about the project environment can be found below, especially regarding:
@@ -13,31 +15,24 @@ Details about dependencies are documented below
 
 ### Instructions
 The repository is structured as follow.
-
-- `<main_banana.ipynb>` is *the central file you want to use*. It contains
+- [`main_banana.ipynb`](src_submission/main_banana.ipynb) is *the central file you want to use*. It contains
 -- all the import statements and instructions to start the environment
 -- the calls to *train*
 -- the calls to *test*
-- `<dqn_agent_banana.py>` defines two classes
+- [`dqn_agent_banana.py`](src_submission/dqn_agent_banana.py) defines two classes
 -- Agent with methods such as step, act, learn 
 -- ReplayBuffer to store experience tuples 
-- `<model_banana.py>` defines the Q-Network used by the Agent as a function approximation for Q-values
-- `<checkpoint_banana_431.pth>` are the weights learnt when solving the environment
+- [`model_banana.py`](src_submission/model_banana.py) defines the Q-Network used by the Agent as a function approximation for Q-values
+- [`checkpoint_banana_431.pth`](src_submission/checkpoint_banana_431.pth) are the weights learnt when solving the environment
 
 ### Report
-`<report.ipynb>` describes choices and details results. It includes
+[`report.ipynb`](report_submission/report.ipynb) describes choices and details results. It includes
 - Description of the model architectures 
 - Description of the hyperparameters
 - Plot of Rewards
 - Ideas for Future Work
 
-### Spoiler
-- Number of episodes needed to solve the environment = 431 :bowtie:
-
-
-[![GIF of my agent beeing trained at episode #200, with epsilon=0.5](https://github.com/chauvinSimon/deep-reinforcement-learning/tree/master/p1_navigation/report_submission/training-eps-50-percent.gif)](https://github.com/chauvinSimon/deep-reinforcement-learning/tree/master/p1_navigation/report_submission/training-eps-50-percent.gif)
-
-
+![GIF of my agent being trained at episode #200, with epsilon=0.5](report_submission/training-eps-50-percent.gif "training-eps-50-percent")
 
 # Initial description - Project 1: Navigation
 
