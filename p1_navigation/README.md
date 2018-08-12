@@ -1,10 +1,16 @@
 # Submission - Project 1: Navigation
 
->-- :banana: :bowtie: :banana:  -- Spoiler: problem solved in 431 Episodes --  :banana: :bowtie: :banana: 
+>-- :banana: :bowtie: :banana:  -- Spoiler: problem solved in 2 Episodes, duration=134.74 [s] on CPU --  :banana: :bowtie: :banana: 
 
-| ![GIF of my trained agent, trained in 431 episodes](report_submission/demo_banana.gif "GIF of my trained agent, trained in 431 episodes")  | 
+>-- Ok, `2` means that the `mean{return} over [episode_2 ... episode_102]` is larger than `13` 
+
+| ![GIF of my trained agent, trained in 102 episodes](report_submission/demo_banana.gif "GIF of my trained agent, trained in 102 episodes")  | 
 |:--:| 
-| *GIF of my trained agent, trained in 431 episodes* |
+| *GIF of my trained agent, trained in 102 episodes* |
+
+| ![Rewards during training](report_submission/2.svg "Rewards during training")  | 
+|:--:| 
+| *Rewards during training* |
 
 ### Problem Setting
 For this project, I had to train an agent to navigate and collect bananas in a large, square world.  
@@ -47,7 +53,7 @@ The repository is structured as follow.
     - Agent with methods such as step, act, learn 
     - ReplayBuffer to store experience tuples 
 - [`model_banana.py`](src_submission/model_banana.py) defines the Q-Network used by the Agent as a function approximation for Q-values
-- [`checkpoint_banana_431.pth`](src_submission/checkpoint_banana_431.pth) are the saved model weights of the successful agent weights
+- [`checkpoint380.pth`](src_submission/checkpoint380.pth) are the saved model weights of one successful agent
 
 ### Report
 [`report.ipynb`](report.ipynb) describes choices and details results. It includes
@@ -56,9 +62,9 @@ The repository is structured as follow.
 - Plot of Rewards
 - Ideas for Future Work
 
-| ![GIF of my agent being trained at episode #150, with epsilon=0.5](report_submission/training-eps-50-percent.gif "training-eps-50-percent") | 
+| ![GIF of my agent being trained at half time, i.e. with epsilon=0.5](report_submission/training-eps-50-percent.gif "training-eps-50-percent") | 
 |:--:| 
-| *GIF of my agent being trained at episode #150, with epsilon=0.5* |
+| *GIF of my agent being trained at half time, i.e. with epsilon=0.5* |
 
 
 ### (Optional) Challenge: Learning from Pixels
