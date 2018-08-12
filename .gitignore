@@ -106,6 +106,7 @@ ENV/
 # perso stuff
 log.py
 Videos/
+.mp4
 
 # exe
 p1_navigation/bug

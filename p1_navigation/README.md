@@ -1,8 +1,45 @@
-[//]: # (Image References)
+# Submission - Project 1: Navigation
 
-[image1]: https://user-images.githubusercontent.com/10624937/42135619-d90f2f28-7d12-11e8-8823-82b970a54d7e.gif "Trained Agent"
+[![GIF of my trained agent, trained in 431 episodes](https://github.com/chauvinSimon/deep-reinforcement-learning/tree/master/p1_navigation/report_submission/demo_banana.gif)](https://github.com/chauvinSimon/deep-reinforcement-learning/tree/master/p1_navigation/report_submission/demo_banana.gif)
 
-# Project 1: Navigation
+### Instructions
+Details about the project environment can be found below, especially regarding:
+- the state space
+- the action space
+- when the environment is considered solved
+
+### Getting Started
+Details about dependencies are documented below
+
+### Instructions
+The repository is structured as follow.
+
+- `<main_banana.ipynb>` is *the central file you want to use*. It contains
+-- all the import statements and instructions to start the environment
+-- the calls to *train*
+-- the calls to *test*
+- `<dqn_agent_banana.py>` defines two classes
+-- Agent with methods such as step, act, learn 
+-- ReplayBuffer to store experience tuples 
+- `<model_banana.py>` defines the Q-Network used by the Agent as a function approximation for Q-values
+- `<checkpoint_banana_431.pth>` are the weights learnt when solving the environment
+
+### Report
+`<report.ipynb>` describes choices and details results. It includes
+- Description of the model architectures 
+- Description of the hyperparameters
+- Plot of Rewards
+- Ideas for Future Work
+
+### Spoiler
+- Number of episodes needed to solve the environment = 431 :bowtie:
+
+
+[![GIF of my agent beeing trained at episode #200, with epsilon=0.5](https://github.com/chauvinSimon/deep-reinforcement-learning/tree/master/p1_navigation/report_submission/training-eps-50-percent.gif)](https://github.com/chauvinSimon/deep-reinforcement-learning/tree/master/p1_navigation/report_submission/training-eps-50-percent.gif)
+
+
+
+# Initial description - Project 1: Navigation
 
 ### Introduction
 
