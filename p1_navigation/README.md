@@ -47,10 +47,10 @@ The repository is structured as follow.
     - Agent with methods such as step, act, learn 
     - ReplayBuffer to store experience tuples 
 - [`model_banana.py`](src_submission/model_banana.py) defines the Q-Network used by the Agent as a function approximation for Q-values
-- [`checkpoint_banana_431.pth`](src_submission/checkpoint_banana_431.pth) are the weights learnt when solving the environment
+- [`checkpoint_banana_431.pth`](src_submission/checkpoint_banana_431.pth) are the saved model weights of the successful agent weights
 
 ### Report
-[`report.ipynb`](report_submission/report.ipynb) describes choices and details results. It includes
+[`report.ipynb`](report.ipynb) describes choices and details results. It includes
 - Description of the model architectures 
 - Description of the hyperparameters
 - Plot of Rewards
