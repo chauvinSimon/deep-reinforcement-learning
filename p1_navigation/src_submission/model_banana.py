@@ -1,3 +1,5 @@
+# the network used to approximate the Q-values
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

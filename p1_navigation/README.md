@@ -56,9 +56,9 @@ The repository is structured as follow.
 - Plot of Rewards
 - Ideas for Future Work
 
-| ![GIF of my agent being trained at episode #200, with epsilon=0.5](report_submission/training-eps-50-percent.gif "training-eps-50-percent") | 
+| ![GIF of my agent being trained at episode #150, with epsilon=0.5](report_submission/training-eps-50-percent.gif "training-eps-50-percent") | 
 |:--:| 
-| *GIF of my agent being trained at episode #200, with epsilon=0.5* |
+| *GIF of my agent being trained at episode #150, with epsilon=0.5* |
 
 
 ### (Optional) Challenge: Learning from Pixels
