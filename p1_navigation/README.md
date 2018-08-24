@@ -2,7 +2,7 @@
 
 >-- :banana: :bowtie: :banana:  -- Spoiler: problem solved in 2 Episodes, duration=134.74 [s] on CPU --  :banana: :bowtie: :banana: 
 
->-- Ok, `2` means that the `mean{return} over [episode_2 ... episode_102]` is larger than `13` 
+>-- Ok, `2` means that the `mean{return} over [episode_2 ... episode_102]` is larger than `13` . Although reward plot for this performance is presented, the average number of episodes needed to solve the environment is more around 200/250.
 
 | ![GIF of my trained agent, trained in 102 episodes](report_submission/demo_banana.gif "GIF of my trained agent, trained in 102 episodes")  | 
 |:--:| 
