@@ -15,7 +15,7 @@
 ### Problem Setting
 For this project, I had to train an agent to navigate and collect bananas in a large, square world.  
 
-#### Details about the project environment
+#### Details about the environment
 -  The state space
     - The state space has 37 dimensions and contains the agent's velocity, along with ray-based perception of objects around agent's forward direction.
 -  The action space
@@ -25,9 +25,9 @@ For this project, I had to train an agent to navigate and collect bananas in a l
         - **`2`** - turn left.
         - **`3`** - turn right.
 -  Reward function
-    - A reward of +1 is provided for collecting a yellow banana, and a reward of -1 is provided for collecting a blue banana.  Thus, the goal of your agent is to collect as many yellow bananas as possible while avoiding blue bananas.  
+    - A reward of +1 is provided for collecting a yellow banana, and a reward of -1 is provided for collecting a blue banana.  Thus, the goal of the agent is to collect as many yellow bananas as possible while avoiding blue bananas.  
 -  When the environment is considered solved
-    - The task is episodic, and in order to solve the environment, your agent must get an average score of +13 over 100 consecutive episodes.
+    - The task is episodic, and in order to solve the environment, the agent must get an average score of +13 over 100 consecutive episodes.
 
 ### Getting Started
 1. Download the environment from one of the links below.  You need only select the environment that matches your operating system:
@@ -44,16 +44,16 @@ For this project, I had to train an agent to navigate and collect bananas in a l
 
 
 ### Instructions
-The repository is structured as follow.
-- [`main_banana.ipynb`](src_submission/main_banana.ipynb) is *the central file you want to use*. It contains
+My repository is structured as follow.
+- [`main_banana.ipynb`](src_submission/main_banana.ipynb) is **the central file you want to use**. It contains
     - all the import statements and instructions to start the environment
-    - the calls to *train*
-    - the calls to *test*
+    - calls to `train`
+    - calls to `test`
 - [`dqn_agent_banana.py`](src_submission/dqn_agent_banana.py) defines two classes
-    - Agent with methods such as step, act, learn 
-    - ReplayBuffer to store experience tuples 
+    - `Agent` with methods such as `step`, `act`, `learn` 
+    - `ReplayBuffer` to store experience tuples 
 - [`model_banana.py`](src_submission/model_banana.py) defines the Q-Network used by the Agent as a function approximation for Q-values
-- [`checkpoint380.pth`](src_submission/checkpoint380.pth) are the saved model weights of one successful agent
+- [`checkpoint380.pth`](src_submission/checkpoint380.pth) are the saved model weights of one of my successful agents
 
 ### Report
 [`report.ipynb`](report.ipynb) describes choices and details results. It includes
@@ -64,10 +64,12 @@ The repository is structured as follow.
 
 | ![GIF of my agent being trained at half time, i.e. with epsilon=0.5](report_submission/training-eps-50-percent.gif "training-eps-50-percent") | 
 |:--:| 
-| *GIF of my agent being trained at half time, i.e. with epsilon=0.5* |
+| *GIF of my agent being trained. Frames taken at half training time, with epsilon=0.5* |
 
 
 ### (Optional) Challenge: Learning from Pixels
+
+I did not complete the optional challenge, but here are the instructions if you are interested.
 
 After you have successfully completed the project, if you're looking for an additional challenge, you have come to the right place!  In the project, your agent learned from information such as its velocity, along with ray-based perception of objects around its forward direction.  A more challenging task would be to learn directly from pixels!
 
