@@ -35,6 +35,7 @@ class Agent:
         =======
         - action: an integer, compatible with the task's action space
         """
+        print(state)
         action = np.random.choice(np.arange(self.nA), 
                                   p=self.get_probs(state)) if state in self.Q else np.random.choice(np.arange(self.nA))
         return action
