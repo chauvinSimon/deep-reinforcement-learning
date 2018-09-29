@@ -1,3 +1,5 @@
+# ddpg = deterministic deep policy gradient
+
 # Regular net = LOCAL
 # - Most recent
 # - Learnt
@@ -21,9 +23,10 @@ BUFFER_SIZE = int(1e6)  # replay buffer size
 BATCH_SIZE = 128        # minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
-LR_ACTOR = 1e-4         # learning rate of the actor 
+LR_ACTOR = 1e-4         # learning rate of the actor  - try 0.001
 LR_CRITIC = 3e-4        # learning rate of the critic
 WEIGHT_DECAY = 0.0001   # L2 weight decay
+# No EPSILON = ? epsilon_decay = ?
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -47,16 +50,21 @@ class Agent():
         self.actor_local = Actor(state_size, action_size, random_seed).to(device)
         self.actor_target = Actor(state_size, action_size, random_seed).to(device)
         self.actor_optimizer = optim.Adam(self.actor_local.parameters(), lr=LR_ACTOR)
-
+        # no weight_decay - (L2 penalty) (default: 0)
+        
         # Critic Network (w/ Target Network)
         self.critic_local = Critic(state_size, action_size, random_seed).to(device)
         self.critic_target = Critic(state_size, action_size, random_seed).to(device)
         self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=LR_CRITIC, weight_decay=WEIGHT_DECAY)
 
-        # Noise process
+        # Noise process - only is self.act(add_noise=True)
         self.noise = OUNoise(action_size, random_seed)
-
-        # Replay memory - difference with A3C
+        
+        # debug
+        self.learning_counter = 0
+        self.step_counter = 0
+        
+        # Replay memory - a difference with A3C
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
     
     def step(self, state, action, reward, next_state, done):
@@ -65,9 +73,13 @@ class Agent():
         self.memory.add(state, action, reward, next_state, done)
 
         # Learn, if enough samples are available in memory
+        # ToDo: get less aggressive with the number of updates per time step
+        # - instead of updating the actor and critic networks (20 times) at every timestep,
+        # - complete update of the networks (10 times) after every 20 timesteps
         if len(self.memory) > BATCH_SIZE:
-            experiences = self.memory.sample()
-            self.learn(experiences, GAMMA)
+            if self.step_counter % 10 == 0:
+                experiences = self.memory.sample()
+                self.learn(experiences, GAMMA)
 
     def act(self, state, add_noise=True):
         """Returns actions for given state as per current policy."""
@@ -87,7 +99,7 @@ class Agent():
         """Update policy and value parameters using given batch of experience tuples.
         Q_targets = r + γ * critic_target(next_state, actor_target(next_state))
         where:
-            actor_target(state) -> action
+            actor_target(state) -> action  # used in Q_Target as next_action
             critic_target(state, action) -> Q-value
 
         Params
@@ -96,9 +108,15 @@ class Agent():
             gamma (float): discount factor
         """
         states, actions, rewards, next_states, dones = experiences
-
+        
+        # debug: monitor the distribution in actions
+        self.learning_counter += 1
+        if self.learning_counter % 1000 == 0:
+            info = "actions batch at {}-th learning:\n\t shape = {},\n\t mean = {},\n\t  std = {}".format(self.learning_counter, np.shape(actions.cpu().data.numpy()), actions.cpu().data.numpy().mean(0), actions.cpu().data.numpy().std(0))
+            print(info)
+        
         # ---------------------------- update critic ---------------------------- #
-        # Get predicted next-state actions and Q values from target models
+        # Get predicted next-state actions and Q values from TARGETS models
         actions_next = self.actor_target(next_states)
         Q_targets_next = self.critic_target(next_states, actions_next)
         # Compute Q targets for current states (y_i)
@@ -109,11 +127,15 @@ class Agent():
         # Minimize the loss
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
+        # improvment: use gradient clipping when training the critic network
+        torch.nn.utils.clip_grad_norm(self.critic_local.parameters(), 1)
         self.critic_optimizer.step()
-
+        
         # ---------------------------- update actor ---------------------------- #
         # Compute actor loss
         actions_pred = self.actor_local(states)
+        # the loss is given by the negative mean of the q-values (from the LOCAL critic)
+        # what was the loss with POO or REINFORCE? SUM[policy_loss.append(-log_prob * R)  # = g]
         actor_loss = -self.critic_local(states, actions_pred).mean()
         # Minimize the loss
         self.actor_optimizer.zero_grad()
@@ -139,7 +161,8 @@ class Agent():
             target_param.data.copy_(tau*local_param.data + (1.0-tau)*target_param.data)
 
 class OUNoise:
-    """Ornstein-Uhlenbeck process."""
+    """Ornstein-Uhlenbeck process.
+    In action += self.noise.sample()"""
 
     def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.2):
         """Initialize parameters and noise process."""
@@ -158,6 +181,7 @@ class OUNoise:
         x = self.state
         dx = self.theta * (self.mu - x) + self.sigma * np.array([random.random() for i in range(len(x))])
         self.state = x + dx
+#         print("self.noise.state - {}".format(self.state))
         return self.state
 
 class ReplayBuffer:
@@ -183,6 +207,7 @@ class ReplayBuffer:
     
     def sample(self):
         """Randomly sample a batch of experiences from memory."""
+        # ToDo: P.E.R.
         experiences = random.sample(self.memory, k=self.batch_size)
 
         states = torch.from_numpy(np.vstack([e.state for e in experiences if e is not None])).float().to(device)

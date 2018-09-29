@@ -6,6 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 def hidden_init(layer):
+    """compute bounds [-lim, lim] for uniform sampling
+    with lim = 1/sqrt(nb_output)"""
     fan_in = layer.weight.data.size()[0]
     lim = 1. / np.sqrt(fan_in)
     return (-lim, lim)
@@ -33,13 +35,15 @@ class Actor(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        # Fills the input Tensor with values drawn from the uniform distribution
+        # bounds are given by 
         self.fc1.weight.data.uniform_(*hidden_init(self.fc1))
         self.fc2.weight.data.uniform_(-3e-3, 3e-3)
 
     def forward(self, state):
         """Build an actor (policy) network that maps states -> actions."""
         x = F.relu(self.fc1(state))
-        return F.tanh(self.fc2(x))
+        return F.tanh(self.fc2(x))  # to get each action in [-1, 1] 
 
 
 class Critic(nn.Module):
@@ -75,8 +79,9 @@ class Critic(nn.Module):
 
     def forward(self, state, action):
         """Build a critic (value) network that maps (state, action) pairs -> Q-values."""
+        # LeakyReLU: x if x>0 and 0.01*x if x<0
         xs = F.leaky_relu(self.fcs1(state))
-        x = torch.cat((xs, action), dim=1)
+        x = torch.cat((xs, action), dim=1)  # FC[actions + FC(State)] 
         x = F.leaky_relu(self.fc2(x))
         x = F.leaky_relu(self.fc3(x))
         return self.fc4(x)
