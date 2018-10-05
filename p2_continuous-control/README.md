@@ -98,9 +98,9 @@ The report also contains ideas for **debug** and **monitoring tools**.
 - For instance, to deal with **saturation of actuators**.
 - I met this failure several times while training and gives some techniques to cope with in [`report.ipynb`](report.ipynb)
 
-| ![`saturation of actuator - a single failing agent constantly applying maximum torques`](report_submission/saturated-torques.gif "saturation of actuator - a single failing agent constantly applying maximum torques") | 
+| ![`Saturation of actuators - a failing agent constantly applying maximum torques`](report_submission/saturated-torques.gif "Saturation of actuators - a failing agent constantly applying maximum torques") | 
 |:--:| 
-| *saturation of actuator - a single failing agent constantly applying maximum torques* |
+| *Saturation of actuators - a failing agent constantly applying maximum torques* |
 
 
 ### (Optional) Challenge: Crawler Environment
