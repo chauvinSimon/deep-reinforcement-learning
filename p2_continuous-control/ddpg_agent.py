@@ -67,6 +67,10 @@ class Agent():
         # Replay memory - a difference with A3C
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
     
+        # ----------------------- update target networks ----------------------- #
+        self.soft_update(self.critic_local, self.critic_target, tau=0.99)
+        self.soft_update(self.actor_local, self.actor_target, tau=0.99)   
+        
     def step(self, state, action, reward, next_state, done):
         """Save experience in replay memory, and use random sample from buffer to learn."""
         # Save experience / reward
@@ -77,9 +81,10 @@ class Agent():
         # - instead of updating the actor and critic networks (20 times) at every timestep,
         # - complete update of the networks (10 times) after every 20 timesteps
         if len(self.memory) > BATCH_SIZE:
-            if self.step_counter % 10 == 0:
-                experiences = self.memory.sample()
-                self.learn(experiences, GAMMA)
+            if self.step_counter % 20 == 0:
+                for _ in range(10):
+                    experiences = self.memory.sample()
+                    self.learn(experiences, GAMMA)
 
     def act(self, state, add_noise=True):
         """Returns actions for given state as per current policy."""
@@ -128,7 +133,7 @@ class Agent():
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
         # improvment: use gradient clipping when training the critic network
-        torch.nn.utils.clip_grad_norm(self.critic_local.parameters(), 1)
+        torch.nn.utils.clip_grad_norm_(self.critic_local.parameters(), 1)  # difference with clip_grad_norm_??
         self.critic_optimizer.step()
         
         # ---------------------------- update actor ---------------------------- #

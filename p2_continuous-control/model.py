@@ -1,4 +1,8 @@
 # Is DDPG an actor-critic? - Discutable. Not using the critic for a baseline as seen for A3C
+# ToDo:
+# - try batch norm
+# - shadow net
+
 import numpy as np
 
 import torch
@@ -43,7 +47,7 @@ class Actor(nn.Module):
     def forward(self, state):
         """Build an actor (policy) network that maps states -> actions."""
         x = F.relu(self.fc1(state))
-        return F.tanh(self.fc2(x))  # to get each action in [-1, 1] 
+        return torch.tanh(self.fc2(x))  # to get each action in [-1, 1]
 
 
 class Critic(nn.Module):
