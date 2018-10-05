@@ -1,6 +1,6 @@
 # Submission - Project 2: Continuous Control
 
-| ![GIF of my trained agent, trained in 180 episodes](report_submission/success-gif.gif "GIF of my trained agent, trained in 180 episodes")  | 
+| ![GIF of my trained agent, trained in 180 episodes](report_submission/success-20-agents.gif "GIF of my trained agent, trained in 180 episodes")  | 
 |:--:| 
 | *GIF of my trained agent, trained in 180 episodes* |
 
@@ -98,7 +98,7 @@ The report also contains ideas for **debug** and **monitoring tools**.
 - For instance, to deal with **saturation of actuators**.
 - I met this failure several times while training and gives some techniques to cope with in [`report.ipynb`](report.ipynb)
 
-| ![saturation of actuator - a single failing agent constantly applying maximum torques](report_submission/saturated-torques.gif' "saturation of actuator - a single failing agent constantly applying maximum torques") | 
+| ![`saturation of actuator - a single failing agent constantly applying maximum torques`](report_submission/saturated-torques.gif "saturation of actuator - a single failing agent constantly applying maximum torques") | 
 |:--:| 
 | *saturation of actuator - a single failing agent constantly applying maximum torques* |
 
