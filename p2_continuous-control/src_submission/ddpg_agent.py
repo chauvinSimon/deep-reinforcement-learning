@@ -1,4 +1,19 @@
 # Definition of the Agent, the Memory Replay and the OU-Noise
+# DDPG = deterministic deep policy gradient
+# https://arxiv.org/pdf/1509.02971.pdf
+
+###
+# Main features:
+# -1- Experience Replay buffer
+#    critic network is trained off-policy with samples from a replay buffer to minimize correlations between samples
+# -2- Target nets to give consistent targets
+# 	 using soft target updates
+# -3- Batch Normalization to minimize covariance shift during training
+#    by ensuring that each layer receives whitened input
+# -4- OU-Noise
+#    to construct an exploration policy µ by adding noise sampled from a noise process N to our actor policy
+#    i.e. generate temporally correlated exploration for exploration efficiency with inertia
+###
 
 import numpy as np
 import random
@@ -12,20 +27,25 @@ import torch.nn.functional as F
 import torch.optim as optim
 import pickle
 
-BUFFER_SIZE = int(5e5)  # replay buffer size
-BATCH_SIZE = 512        # mini-batch size
-GAMMA = 0.99            # discount factor
-TAU = 1e-3              # for soft update of target parameters
-LR_ACTOR = 1e-3         # learning rate of the actor
-LR_CRITIC = 3e-3        # learning rate of the critic
-WEIGHT_DECAY = 0        # L2 weight decay
+BUFFER_SIZE = int(5e5)  # replay buffer size (int(1e6) in paper)
+BATCH_SIZE = 512        # mini-batch size (64 in paper)
+GAMMA = 0.99            # discount factor (0.99 in paper)
+TAU = 1e-3              # for soft update of target parameters (1e-3 in paper)
+LR_ACTOR = 1e-3         # learning rate of the actor (1e-4 in paper)
+LR_CRITIC = 3e-3        # learning rate of the critic (1e-3 in paper)
+WEIGHT_DECAY = 0        # L2 weight decay (1e−2 in paper)
 NUM_AGENTS = 20
+# OPTIMIZER = Adam      # (as in paper)
+# ACTIVATION = ReLu     # for hidden layers (as in paper)
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class Agent:
-    """Interacts with and learns from the environment."""
+    """Interacts with and learns from the environment
+    DDQN is inspired from DQN: the network is trained with a target Q network
+        to give consistent targets during temporal-difference backups
+    """
 
     def __init__(self, state_size, action_size, random_seed):
         """Initialize an Agent object.
@@ -50,6 +70,9 @@ class Agent:
         self.critic_target = Critic(state_size, action_size, random_seed).to(device)
         self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=LR_CRITIC, weight_decay=WEIGHT_DECAY)
 
+        # hard copy
+        # ToDo
+
         # Noise process
         self.noise = OUNoise(action_size, random_seed)
 
@@ -64,7 +87,11 @@ class Agent:
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
 
     def step(self, state, action, reward, next_state, done):
-        """Save experience in replay memory, and use random sample from buffer to learn."""
+        """Save experience in replay memory, and use random sample from buffer to learn
+        Notes:
+            - the original paper learns at each step
+            - here, get less aggressive (update networks 10 times after every 20 timesteps
+        """
         self.step_counter += 1
         # Save experience / reward
         self.memory.add(state, action, reward, next_state, done)
@@ -89,6 +116,7 @@ class Agent:
         return np.clip(action, -1, 1)
 
     def reset(self):
+        """ Initialize a random process N for action exploration """
         self.noise.reset()
 
     def learn(self, experiences, gamma):
@@ -128,7 +156,7 @@ class Agent:
         q_targets_next = self.critic_target(next_states, actions_next)
         # Compute Q targets for current states (y_i)
         q_targets = rewards + (gamma * q_targets_next * (1 - dones))
-        # Compute critic loss
+        # Compute critic loss (L2)
         q_expected = self.critic_local(states, actions)
         critic_loss = F.mse_loss(q_expected, q_targets)
         # Minimize the loss
@@ -138,7 +166,7 @@ class Agent:
         self.critic_optimizer.step()
 
         # ---------------------------- update actor ---------------------------- #
-        # Compute actor loss
+        # Compute actor loss - using sampled policy gradient
         actions_predict = self.actor_local(states)
         actor_loss = -self.critic_local(states, actions_predict).mean()
         # Minimize the loss
@@ -153,7 +181,7 @@ class Agent:
 
     @staticmethod
     def soft_update(local_model, target_model, tau):
-        """Soft update model parameters.
+        """Soft update model parameters, rather than directly copying the weights
         θ_target = τ*θ_local + (1 - τ)*θ_target
 
         Params
@@ -167,7 +195,15 @@ class Agent:
 
 
 class OUNoise:
-    """Ornstein-Uhlenbeck process."""
+    """exploration noise based on Ornstein-Uhlenbeck process
+    Ideas:
+    - In action += self.noise.sample()
+    - Construct an exploration policy µ by adding noise sampled from a noise process N to our actor policy
+    - Use temporally correlated noise in order to explore well in physical environments that have momentum
+    - Original paper sets θ = 0.15 and σ = 0.2.
+    - The Ornstein-Uhlenbeck process models the velocity of a Brownian particle with friction,
+    which results in temporally correlated values centered around 0.
+    """
 
     def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.2):
         """Initialize parameters and noise process."""
@@ -184,6 +220,7 @@ class OUNoise:
 
     def sample(self):
         """Update internal state and return it as a noise sample."""
+        # ToDo: P.E.R.
         x = self.state
         dx = self.theta * (self.mu - x) + self.sigma * np.array([random.random() for _ in range(len(x))])
         self.state = x + dx
@@ -191,7 +228,9 @@ class OUNoise:
 
 
 class ReplayBuffer:
-    """Fixed-size buffer to store experience tuples."""
+    """Fixed-size buffer to store experience tuples
+    DDQN is inspired from DQN: ReplayBuffer to minimize correlations between samples
+    """
 
     def __init__(self, action_size, buffer_size, batch_size, seed):
         """Initialize a ReplayBuffer object.
