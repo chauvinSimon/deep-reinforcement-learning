@@ -78,7 +78,8 @@ class Critic(nn.Module):
         """
         super(Critic, self).__init__()
         self.seed = torch.manual_seed(seed)
-        # self.bn = nn.BatchNorm1d(state_size)
+
+        self.bn = nn.BatchNorm1d(state_size)  # batch normalization
         self.fcs1 = nn.Linear(state_size, fcs1_units)
         # Actions are not included until the 2nd hidden layer of Q
         self.fc2 = nn.Linear(fcs1_units+action_size, fc2_units)
@@ -96,8 +97,7 @@ class Critic(nn.Module):
 
     def forward(self, state, action):
         """Build a critic (value) network that maps (state, action) pairs -> Q-values."""
-        # ToDo: test LeakyReLU= x if x>0 and 0.01*x if x<0
-        # state = self.bn(state)
+        state = self.bn(state)  # batch normalization
         xs = F.relu(self.fcs1(state))
         x = torch.cat((xs, action), dim=1)
         x = F.relu(self.fc2(x))

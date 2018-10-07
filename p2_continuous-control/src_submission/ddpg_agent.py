@@ -10,6 +10,7 @@
 # 	 using soft target updates
 # -3- Batch Normalization to minimize covariance shift during training
 #    by ensuring that each layer receives whitened input
+#    (especially useful when trying to generalize over different environments)
 # -4- OU-Noise
 #    to construct an exploration policy µ by adding noise sampled from a noise process N to our actor policy
 #    i.e. generate temporally correlated exploration for exploration efficiency with inertia
@@ -70,8 +71,9 @@ class Agent:
         self.critic_target = Critic(state_size, action_size, random_seed).to(device)
         self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=LR_CRITIC, weight_decay=WEIGHT_DECAY)
 
-        # hard copy
-        # ToDo
+        # As in paper, initial hard copy
+        self.soft_update(self.critic_local, self.critic_target, tau=0.99)
+        self.soft_update(self.actor_local, self.actor_target, tau=0.99)
 
         # Noise process
         self.noise = OUNoise(action_size, random_seed)
