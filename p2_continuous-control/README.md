@@ -23,9 +23,9 @@
 - One important difficulty comes from the fact that the **action space is continuous**
 - Hence methods used in [Project 1](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p1_navigation) cannot be used.
 
-| ![Action distribution of the first agent during training](report_submission/action-distribution.png "Action distribution of the first agent during training")  | 
+| ![One of my debug-tools: Action distribution of the first agent during training](report_submission/action-distribution.png "One of my debug-tools: Action distribution of the first agent during training")  | 
 |:--:| 
-| *Action distribution of the first agent during training* |
+| *One of my debug-tools: Action distribution of the first agent during training* |
 
 ### Distributed Training
 
@@ -84,7 +84,7 @@ My repository is structured as follow.
     - `ReplayBuffer` to store experience tuples 
 	- `Ornstein-Uhlenbeck Noise` process, used when calling `agent.act()` to help convergence of the Actor
 - [`model.py`](src_submission/model.py) defines the Actor and Critic Networks used by the Agent
-- [`checkpoint_critic36.pth`](src_submission/checkpoint_critic36.pth) and [`checkpoint_actor36pth`](src_submission/checkpoint_actor36.pth) are the saved model weights of one of my successful agents
+- [`checkpoint_critic12success.pth`](src_submission/checkpoint_critic12success.pth) and [`checkpoint_actor12success.pth`](src_submission/checkpoint_actor12success.pth) are the saved model weights of one of my successful agents.
 
 
 ### Report
