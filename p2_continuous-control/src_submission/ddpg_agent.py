@@ -155,6 +155,8 @@ class Agent:
         # ---------------------------- update critic ---------------------------- #
         # Get predicted next-state actions and Q values from target models
         actions_next = self.actor_target(next_states)
+        # using the next_action to produce a target
+        # hence sort of on-policy SARSA. Except that it uses the target net
         q_targets_next = self.critic_target(next_states, actions_next)
         # Compute Q targets for current states (y_i)
         q_targets = rewards + (gamma * q_targets_next * (1 - dones))
@@ -170,6 +172,8 @@ class Agent:
         # ---------------------------- update actor ---------------------------- #
         # Compute actor loss - using sampled policy gradient
         actions_predict = self.actor_local(states)
+        # use samples to estimate the expectation. Hence mean()
+        # Deterministic Gradient Policy Theorem: gradient = expectation[Q-values]
         actor_loss = -self.critic_local(states, actions_predict).mean()
         # Minimize the loss
         self.actor_optimizer.zero_grad()
