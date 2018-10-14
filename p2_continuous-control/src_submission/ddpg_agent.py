@@ -1,6 +1,7 @@
 # Definition of the Agent, the Memory Replay and the OU-Noise
 # DDPG = deterministic deep policy gradient
 # https://arxiv.org/pdf/1509.02971.pdf
+# so code walk-through: https://www.youtube.com/watch?v=08V9r3NgFSE
 
 ###
 # Main features:
@@ -174,6 +175,7 @@ class Agent:
         actions_predict = self.actor_local(states)
         # use samples to estimate the expectation. Hence mean()
         # Deterministic Gradient Policy Theorem: gradient = expectation[Q-values]
+        # pytorch by default does gradient DESCENT. Hence minus term for ASCENT
         actor_loss = -self.critic_local(states, actions_predict).mean()
         # Minimize the loss
         self.actor_optimizer.zero_grad()
