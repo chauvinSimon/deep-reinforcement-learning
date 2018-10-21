@@ -112,6 +112,7 @@ class Agent:
         self.actor_local.eval()
         with torch.no_grad():
             action = self.actor_local(state).cpu().data.numpy()
+        # Sets the module in *training mode* (as opposed to the evaluation mode)
         self.actor_local.train()
         if add_noise:
             for i in range(NUM_AGENTS):
@@ -164,11 +165,21 @@ class Agent:
         # Compute critic loss (L2)
         q_expected = self.critic_local(states, actions)
         critic_loss = F.mse_loss(q_expected, q_targets)
+
         # Minimize the loss
+        # backward() function accumulates gradients - zero them out at the start
         self.critic_optimizer.zero_grad()
+        # The backward function receives the gradient of the output Tensors
+        #   with respect to some scalar value, and computes the gradient of the
+        #   input Tensors with respect to that same scalar value.
         critic_loss.backward()
+        # loss.backward() computes dloss/dx for every parameter x which has requires_grad=True.
+        # These are accumulated into x.grad for every parameter x.
         torch.nn.utils.clip_grad_norm_(self.critic_local.parameters(), 1)
+        # optimizer.step is performs a parameter update based on the current gradient
+        # (stored in .grad attribute of a parameter) and the update rule.
         self.critic_optimizer.step()
+        # For instance, SGD optimizer performs: x += -lr * x.grad
 
         # ---------------------------- update actor ---------------------------- #
         # Compute actor loss - using sampled policy gradient
@@ -177,10 +188,11 @@ class Agent:
         # Deterministic Gradient Policy Theorem: gradient = expectation[Q-values]
         # pytorch by default does gradient DESCENT. Hence minus term for ASCENT
         actor_loss = -self.critic_local(states, actions_predict).mean()
-        # Minimize the loss
+
+        # Minimize the loss: Zero gradients, perform a backward pass, and update the weights
         self.actor_optimizer.zero_grad()
         torch.nn.utils.clip_grad_norm_(self.actor_local.parameters(), 1)
-        actor_loss.backward()
+        actor_loss.backward()  # Use autograd to compute the backward pass
         self.actor_optimizer.step()
 
         # ----------------------- update target networks ----------------------- #
