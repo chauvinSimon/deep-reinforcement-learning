@@ -1,9 +1,16 @@
+# Experience Replay buffer
+#    critic network is trained off-policy with samples from a replay buffer to minimize correlations between samples
+
 from collections import deque
 import random
 from utilities import transpose_list
 
 
 class ReplayBuffer:
+    """Fixed-size buffer to store experience tuples
+    DDQN is inspired from DQN: ReplayBuffer to minimize correlations between samples
+    """
+
     def __init__(self,size):
         self.size = size
         self.deque = deque(maxlen=self.size)
