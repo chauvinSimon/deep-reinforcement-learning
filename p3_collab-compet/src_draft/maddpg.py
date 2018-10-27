@@ -29,8 +29,8 @@ class MADDPG:
 
         # args = in_actor, hidden_in_actor, hidden_out_actor, out_actor, in_critic, hidden_in_critic, hidden_out_critic
         # critic input = obs_full + actions = 2*24+2+2=52
-        self.maddpg_agent = [DDPGAgent(24, 64, 64, 2, 52, 64, 64),
-                             DDPGAgent(24, 64, 64, 2, 52, 64, 64)]
+        self.maddpg_agent = [DDPGAgent(24, 400, 300, 2, 52, 400, 300),
+                             DDPGAgent(24, 400, 300, 2, 52, 400, 300)]
         # DDPGAgent(24, 16, 8, 2, 52, 32, 16)]
 
         self.discount_factor = discount_factor
@@ -149,3 +149,20 @@ class MADDPG:
     def reset(self):
         for ddpg_agent in self.maddpg_agent:
             ddpg_agent.reset()
+
+    def save(self, saving_name):
+        for i, ddpg_agent in enumerate(self.maddpg_agent):
+            torch.save(ddpg_agent.local_actor.state_dict(), saving_name + '-' + str(i) + '.actor.pth')
+            torch.save(ddpg_agent.local_critic.state_dict(), saving_name + '-' + str(i) + '.critic.pth')
+
+    def load(self, loading_name):
+        for i, ddpg_agent in enumerate(self.maddpg_agent):
+            actor_file = torch.load(loading_name + '-' + str(i) + '.actor.pth', map_location='cpu')
+            critic_file = torch.load(loading_name + '-' + str(i) + '.critic.pth', map_location='cpu')
+            # same config for locals and targets
+            ddpg_agent.local_actor.load_state_dict(actor_file)
+            ddpg_agent.target_actor.load_state_dict(actor_file)
+            ddpg_agent.local_critic.load_state_dict(critic_file)
+            ddpg_agent.target_critic.load_state_dict(critic_file)
+        print('Loaded: {}.actor.pth'.format(loading_name))
+        print('Loaded: {}.critic.pth'.format(loading_name))
