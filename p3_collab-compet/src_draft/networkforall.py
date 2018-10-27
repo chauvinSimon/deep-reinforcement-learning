@@ -1,3 +1,10 @@
+# Definition of the nets for Critic and Actor
+
+# hyper-parameters
+# - [The final layer weights and biases of both the actor and critic were initialized
+#    from a uniform distribution [−3×10−3, 3×10−3]]ddpg.p.
+# - [Other layers were initialized from uniform distributions [−1/√f , 1/√f] where f is the fan-in of the layer]ddpg.p.
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as f
@@ -23,7 +30,7 @@ class Network(nn.Module):
         self.fc3 = nn.Linear(hidden_out_dim, output_dim)
         self.non_lin = f.relu  # leaky_relu
         self.actor = actor
-        # self.reset_parameters()
+        self.reset_parameters()
 
     def reset_parameters(self):
         self.fc1.weight.data.uniform_(*hidden_init(self.fc1))
@@ -34,15 +41,10 @@ class Network(nn.Module):
         if self.actor:
             # return a vector of the force
             h1 = self.non_lin(self.fc1(x))
-
             h2 = self.non_lin(self.fc2(h1))
-            h3 = (self.fc3(h2))
-            norm = torch.norm(h3)
-            
-            # h3 is a 2D vector (a force that is applied to the agent)
-            # we bound the norm of the vector to be between 0 and 10
-            return 10.0*(f.tanh(norm))*h3/norm if norm > 0 else 10*h3
-        
+            h3 = torch.tanh(self.fc3(h2))
+            return h3
+
         else:
             # critic network simply outputs a number
             h1 = self.non_lin(self.fc1(x))

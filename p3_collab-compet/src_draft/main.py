@@ -379,7 +379,8 @@ if __name__=='__main__':
 #   ]
 # ]
 
-# obs, obs_full, actions_for_env, rewards, next_obs, next_obs_full, dones
+# for 3 agents and batch_size = 2
+# order = obs, obs_full, actions_for_env, rewards, next_obs, next_obs_full, dones
 samples = [
   [  # obs
     array([

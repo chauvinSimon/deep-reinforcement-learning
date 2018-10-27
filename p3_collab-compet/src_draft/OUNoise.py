@@ -2,6 +2,9 @@
 #    to construct an exploration policy µ by adding noise sampled from a noise process N to our actor policy
 #    i.e. generate temporally correlated exploration for exploration efficiency with inertia
 
+# hyper-parameters
+# - [We used an Ornstein-Uhlenbeck process with θ = 0.15 and σ = 0.2]ddpg.p.
+
 import numpy as np
 import torch
 
