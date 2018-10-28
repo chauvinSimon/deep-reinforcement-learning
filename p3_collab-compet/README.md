@@ -1,3 +1,9 @@
+[//]: # (Image References)
+
+[image2]: https://user-images.githubusercontent.com/10624937/42135622-e55fb586-7d12-11e8-8a54-3c31da15a90a.gif "Soccer"
+
+# Submission - Project 3: Collaboration and Competition
+
 | ![GIF of my trained agents](report_submission/success-agent.gif "GIF of my trained agents")  | 
 |:--:| 
 | *GIF of my trained agents* |
@@ -7,44 +13,50 @@
 | *Returns during training - solved in 2154 episodes* |
 
 
-# Submission - Project 3: Collaboration and Competition
-
 ### Introduction
 
 For this project, I have worked with the [Tennis](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Learning-Environment-Examples.md#tennis) environment.
 
 
+**Environment**
+
 In this environment, two agents control rackets to bounce a ball over a net. If an agent hits the ball over the net, it receives a reward of +0.1.  If an agent lets a ball hit the ground or hits the ball out of bounds, it receives a reward of -0.01.  Thus, the **goal of each agent is to keep the ball in play**. Hence it is a **collaborative** task.
 
 The observation space consists of 8 variables corresponding to the position and velocity of the ball and racket. Each agent receives its own, local observation.  Two continuous actions are available, corresponding to movement toward (or away from) the net, and jumping. 
 
-To better understand the structure of the observation space, I have implemented a function that parses and returns a structured information.
+To **better understand the structure of the observation space**, I have implemented a function that parses the information supplied by  the environement.
 
-Here are my findinds concerning the positions:
-    - `y-pos-ball` is the same for `Agent1` and `Agent2`.
-    - `x-pos-ball` is the same except with opposite signs (I can think of it as the _signed distance to net_).
+Here are my findinds concerning the *positions of the rackets and the ball*:
+
+- `y-pos-ball` is the same for `Agent1` and `Agent2`.
+- `x-pos-ball` is the same except with opposite signs (I can think of it as the _signed distance to net_).
 
 
-| ![Trying to understand the structure of the state](report_submission/states.png "Trying to understand the structure of the state")  | 
+| ![Trying to understand the structure of the observation state](report_submission/states.png "Trying to understand the structure of the observation state")  | 
 |:--:| 
-| *Trying to understand the structure of the state* |
+| *Trying to understand the structure of the observation state* |
 
 
 For the *velocity* I am really confused:
-    - I noticed that `vel-ball == vel-agent`, for both `x` and `y`.
-    - This applies all the time, no matter if the agent is static or not.
+
+- I noticed that `vel-ball == vel-agent`, for both `x` and `y`.
+- This applies all the time, no matter if the agent is static or not.
     
 I have then investigated the transtions, i.e. the impact of actions on the state.
-    - The attached table shows the transitions `S-A-S'`.
-    - I first notice the presence of saturation (you cannot go above `vel=+/-30`).
-    - Then, if the action is positive, one could think it will increase the corresponding velocity. This happens some times. But not always.
-    - That makes me think that `racket velocities` are actually *relative to the ball*.
-    - That would explain the *non-monotone transitions* as well as the fact that `racket-vel == ball-vel`.
-    - Another important consequence would be that we could *ignore 2 of the 8 elements of each state*.
+
+- The subsequent table shows the transitions `S-A-S'-A'-S''`.
+- I first notice the presence of saturation (you cannot go above `vel=+/-30`).
+- Then, if the action is positive, one could expect it will increase the corresponding *velocity field*. This happens some times. But not always.
+- This makes me think that `racket velocities` are actually *relative to the ball*.
+- It would explain the *non-monotone transitions* and justify `racket-vel == ball-vel`.
+- Another important consequence would be that we could *ignore 2 of the 8 elements of each state*.
 
 | ![Trying to understand the transitions](report_submission/transitions.png "Trying to understand the transitions")  | 
 |:--:| 
 | *Trying to understand the transitions* |
+
+
+**Task**
 
 The task is episodic, and in order to solve the environment, agents must get an average score of +0.5 (over 100 consecutive episodes, after taking the maximum over both agents). Specifically,
 
@@ -80,7 +92,7 @@ My repository is structured as follow.
     - `ReplayBuffer` to store experience tuples 
 	- `Ornstein-Uhlenbeck Noise` process, used when calling `agent.act()` to help convergence of the Actor
 - [`model.py`](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p3_collab-compet/src_submission/model.py) defines the Actor and Critic Networks used by the Agent
-- [`checkpoint_critic12success.pth`](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p3_collab-compet/src_submission/checkpoint_critic12success.pth) and [`checkpoint_actor12success.pth`](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p3_collab-compet/src_submission/checkpoint_actor12success.pth) are the saved model weights of one of my successful agents.
+- [`checkpoint_actor_x67success.pth`](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p3_collab-compet/src_submission/checkpoints/checkpoint_actor_x67success.pth) and [`checkpoint_critic_x67success.pth`](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p3_collab-compet/src_submission/checkpoints/checkpoint_critic_x67success.pth) are the saved model weights of one of my successful agents.
 
 
 ### Report
@@ -90,17 +102,17 @@ My repository is structured as follow.
 - Plot of Rewards
 - Ideas for Future Work
 
-I also present the results obtained on different seeds.
+I also present the results obtained on **different seeds**.
 
-| ![Impact of seed](report_submission/impact_of_seed.png "Impact of seed")  | 
+| ![Impact of seed - detailed in my report](report_submission/impact_of_seed.png "Impact of seed - detailed in my report")  | 
 |:--:| 
-| *Impact of seed* |
+| *Impact of seed- detailed in my report* |
 
-In addition, I introduce tools to monitor for instance the action distribution of each agent.
+In addition, I introduce **tools to monitor** the training phase, for instance the action distribution of each agent.
 
-| ![Actions distribution](report_submission/action-distribution.png "Actions distribution")  | 
+| ![Actions distribution - detailed in my report](report_submission/action-distribution.png "Actions distribution - detailed in my report")  | 
 |:--:| 
-| *Actions distribution* |
+| *Actions distribution - detailed in my report* |
 
 ### (Optional) Challenge: Crawler Environment
 
