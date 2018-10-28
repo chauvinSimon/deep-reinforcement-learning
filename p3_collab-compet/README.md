@@ -1,22 +1,52 @@
-[//]: # (Image References)
+| ![GIF of my trained agents](report_submission/success-agent.gif "GIF of my trained agents")  | 
+|:--:| 
+| *GIF of my trained agents* |
 
-[image1]: https://user-images.githubusercontent.com/10624937/42135623-e770e354-7d12-11e8-998d-29fc74429ca2.gif "Trained Agent"
-[image2]: https://user-images.githubusercontent.com/10624937/42135622-e55fb586-7d12-11e8-8a54-3c31da15a90a.gif "Soccer"
+| ![Returns during training - solved in 2154 episodes](report_submission/success-avg.png "Returns during training - solved in 2154 episodes")  | 
+|:--:| 
+| *Returns during training - solved in 2154 episodes* |
 
 
-# Project 3: Collaboration and Competition
+# Submission - Project 3: Collaboration and Competition
 
 ### Introduction
 
-For this project, you will work with the [Tennis](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Learning-Environment-Examples.md#tennis) environment.
+For this project, I have worked with the [Tennis](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Learning-Environment-Examples.md#tennis) environment.
 
-![Trained Agent][image1]
 
-In this environment, two agents control rackets to bounce a ball over a net. If an agent hits the ball over the net, it receives a reward of +0.1.  If an agent lets a ball hit the ground or hits the ball out of bounds, it receives a reward of -0.01.  Thus, the goal of each agent is to keep the ball in play.
+In this environment, two agents control rackets to bounce a ball over a net. If an agent hits the ball over the net, it receives a reward of +0.1.  If an agent lets a ball hit the ground or hits the ball out of bounds, it receives a reward of -0.01.  Thus, the **goal of each agent is to keep the ball in play**. Hence it is a **collaborative** task.
 
 The observation space consists of 8 variables corresponding to the position and velocity of the ball and racket. Each agent receives its own, local observation.  Two continuous actions are available, corresponding to movement toward (or away from) the net, and jumping. 
 
-The task is episodic, and in order to solve the environment, your agents must get an average score of +0.5 (over 100 consecutive episodes, after taking the maximum over both agents). Specifically,
+To better understand the structure of the observation space, I have implemented a function that parses and returns a structured information.
+
+Here are my findinds concerning the positions:
+    - `y-pos-ball` is the same for `Agent1` and `Agent2`.
+    - `x-pos-ball` is the same except with opposite signs (I can think of it as the _signed distance to net_).
+
+
+| ![Trying to understand the structure of the state](report_submission/states.png "Trying to understand the structure of the state")  | 
+|:--:| 
+| *Trying to understand the structure of the state* |
+
+
+For the *velocity* I am really confused:
+    - I noticed that `vel-ball == vel-agent`, for both `x` and `y`.
+    - This applies all the time, no matter if the agent is static or not.
+    
+I have then investigated the transtions, i.e. the impact of actions on the state.
+    - The attached table shows the transitions `S-A-S'`.
+    - I first notice the presence of saturation (you cannot go above `vel=+/-30`).
+    - Then, if the action is positive, one could think it will increase the corresponding velocity. This happens some times. But not always.
+    - That makes me think that `racket velocities` are actually *relative to the ball*.
+    - That would explain the *non-monotone transitions* as well as the fact that `racket-vel == ball-vel`.
+    - Another important consequence would be that we could *ignore 2 of the 8 elements of each state*.
+
+| ![Trying to understand the transitions](report_submission/transitions.png "Trying to understand the transitions")  | 
+|:--:| 
+| *Trying to understand the transitions* |
+
+The task is episodic, and in order to solve the environment, agents must get an average score of +0.5 (over 100 consecutive episodes, after taking the maximum over both agents). Specifically,
 
 - After each episode, we add up the rewards that each agent received (without discounting), to get a score for each agent. This yields 2 (potentially different) scores. We then take the maximum of these 2 scores.
 - This yields a single **score** for each episode.
@@ -39,11 +69,42 @@ The environment is considered solved, when the average (over 100 episodes) of th
 
 ### Instructions
 
-Follow the instructions in `Tennis.ipynb` to get started with training your own agent!  
+My repository is structured as follow.
+
+- [`main_collab_compet.ipynb`](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p3_collab-compet/src_submission/main_collab_compet.ipynb) is **the central file you want to use**. It contains
+    - all the import statements and instructions to start the environment
+    - calls to `train`
+    - calls to `test`
+- [`ddpg_agent.py`](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p3_collab-compet/src_submission/ddpg_agent.py) defines three classes
+    - `Agent` with methods such as `step`, `act`, `learn` 
+    - `ReplayBuffer` to store experience tuples 
+	- `Ornstein-Uhlenbeck Noise` process, used when calling `agent.act()` to help convergence of the Actor
+- [`model.py`](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p3_collab-compet/src_submission/model.py) defines the Actor and Critic Networks used by the Agent
+- [`checkpoint_critic12success.pth`](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p3_collab-compet/src_submission/checkpoint_critic12success.pth) and [`checkpoint_actor12success.pth`](https://github.com/chauvinSimon/deep-reinforcement-learning/blob/master/p3_collab-compet/src_submission/checkpoint_actor12success.pth) are the saved model weights of one of my successful agents.
+
+
+### Report
+[`report.ipynb`](report.ipynb) describes choices and details results. It includes
+- Description of the model architectures 
+- Description of the hyperparameters
+- Plot of Rewards
+- Ideas for Future Work
+
+I also present the results obtained on different seeds.
+
+| ![Impact of seed](report_submission/impact_of_seed.png "Impact of seed")  | 
+|:--:| 
+| *Impact of seed* |
+
+In addition, I introduce tools to monitor for instance the action distribution of each agent.
+
+| ![Actions distribution](report_submission/action-distribution.png "Actions distribution")  | 
+|:--:| 
+| *Actions distribution* |
 
 ### (Optional) Challenge: Crawler Environment
 
-After you have successfully completed the project, you might like to solve the more difficult **Soccer** environment.
+I entirely focused on the **Tennis** environment. If you are interested, a second and more difficult **Soccer** environment can be addressed.
 
 ![Soccer][image2]
 
